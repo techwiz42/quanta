@@ -99,11 +99,6 @@ x_test = np.array(input_sequences[400:])
 y_train = np.array(labels[0:400])
 y_test = np.array(labels[400:])
 
-print(x_train)
-
-print("\n")
-print(f"x_train.shape {x_train.shape}")
-
 vqr = VQR(
    feature_map = feature_map,
    ansatz = ansatz,
