@@ -29,7 +29,7 @@ def run_main(ticker):
     # without dismissing the data plot.
     # Use the multiprocessing module to perform the plotting activity in another process (i.e., on another core)
     # Can't use threads because matplotlib is not thread-safe.
-    plotting_job = multiprocessing.Process(target=plot_data, kwargs={"df":df})
+    plotting_job = multiprocessing.Process(target=plot_data, kwargs={"df":df, "ticker":ticker})
     plotting_job.start()
     classical_classifier(x_train, y_train, x_test, y_test)
     quantum_classifier(x_train, y_train, x_test, y_test)
@@ -69,7 +69,7 @@ def process_data(df):
     y_test = np.array(labels[400:])
     return (x_train, y_train, x_test, y_test)
 
-def plot_data(df):
+def plot_data(df, ticker):
     plt.style.use('ggplot')
 
     # Convert the 'date' column to datetime format
@@ -82,7 +82,7 @@ def plot_data(df):
     # Adding labels and title
     plt.xlabel('date')
     plt.ylabel('open')
-    plt.title('Time Series Data')
+    plt.title(f"Time Series Data for {ticker}")
 
     # Display the plot
     plt.grid(True)
@@ -90,7 +90,6 @@ def plot_data(df):
 
 def quantum_classifier(x_train, y_train, x_test, y_test):
     #Now comes the Quantum stuff
-    print("begin quantum")
     num_features =  2
     feature_map = PauliFeatureMap(feature_dimension = num_features, reps = 2)
     optimizer = ADAM(maxiter = 100)
@@ -110,20 +109,16 @@ def quantum_classifier(x_train, y_train, x_test, y_test):
             else:
                 qc.cx(i, i+1)
         return qc
-    print("initializing ansatz")
     #Initializing the ansatz circuit
     ansatz = ans(num_features, 5) #anstaz(num_qubits=num_features, reps=5)
-    print("instantiating VQR")
     vqr = VQR(
         feature_map = feature_map,
         ansatz = ansatz,
         optimizer = optimizer,
     )
-    print("vqr.fit")
+    # vqr.fit() runs indefinitely and consumes all the resources on the computer.
     vqr.fit(x_train,y_train)
-    print("predict")
     prediction = vqr.predict(x_test)
-    print("calculate mse")
     vqr_mse = mean_squared_error(y_test, prediction)
 
     # Calculate root mean squared error
@@ -131,7 +126,6 @@ def quantum_classifier(x_train, y_train, x_test, y_test):
     print(f"Quantum root mean squared error: {vqr_rmse}")
 
 def classical_classifier(x_train, y_train, x_test, y_test):    
-    #the 'classical' classifier
     model = Sequential()
     model.add(Dense(64,activation = 'relu', input_shape = (2,)))
     model.add(Dense(1))
