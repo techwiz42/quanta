@@ -19,7 +19,7 @@ from qiskit_machine_learning.algorithms import VQR
 from qiskit_algorithms.optimizers import ADAM
 
 API_KEY = "ebb4b855e1bdd6c131ea21dc938988eb"
-BASE_URL = "https://financialmodelingprep.com/api/v3/historical-price-full"
+BASE_URL = "financialmodelingprep.com/api/v3/historical-price-full"
 
 """
     The main entry point to the program. Gets data, plots it in a separate
@@ -44,7 +44,7 @@ def run_main(tkr):
     plotting_job = multiprocessing.Process(target=plot_data, kwargs={"df":df, "tkr":tkr})
     plotting_job.start()
     classical_classifier(x_train, y_train, x_test, y_test)
-    quantum_classifier(x_train, y_train, x_test, y_test)
+    #quantum_classifier(x_train, y_train, x_test, y_test)
 
 def get_data(api_url):
     """
