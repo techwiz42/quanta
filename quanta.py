@@ -21,20 +21,12 @@ from qiskit_algorithms.optimizers import ADAM
 API_KEY = "ebb4b855e1bdd6c131ea21dc938988eb"
 BASE_URL = "financialmodelingprep.com/api/v3/historical-price-full"
 
-"""
-    The main entry point to the program. Gets data, plots it in a separate
-    process, then classifies it first using a classical algorithm and then
-    using a quantum algorithm
-"""
 def run_main(tkr):
     """
-    The main entry point to the program. Gets data, plots it in a separate
-    process, then classifies it first using a classical algorithm and then
-    using a quantum algorithm
+        The main entry point to the program. Gets data, plots it in a separate
+        process, then classifies it first using a classical algorithm and then
+        using a quantum algorithm
     """
-
-    # First, we fetch the data using the historical Data API endpoint provided
-    # by Financial Modeling Prep as follows:
 
     api_url = f"https://{BASE_URL}/{tkr}?apikey={API_KEY}"
 
@@ -44,7 +36,7 @@ def run_main(tkr):
     plotting_job = multiprocessing.Process(target=plot_data, kwargs={"df":df, "tkr":tkr})
     plotting_job.start()
     classical_classifier(x_train, y_train, x_test, y_test)
-    #quantum_classifier(x_train, y_train, x_test, y_test)
+    quantum_classifier(x_train, y_train, x_test, y_test)
 
 def get_data(api_url):
     """
@@ -65,9 +57,9 @@ def get_data(api_url):
 
 def process_data(df):
     """
-    From this plethora of data, we are going to use open price as our temporal 
-    variable and we will work with 500 data points each representing daily open 
-    prices, and our window size for prediction would be 2.
+        From this plethora of data, we are going to use open price as our temporal
+        variable and we will work with 500 data points each representing daily open
+        prices, and our window size for prediction would be 2.
     """
     df.tail()
     final_data = df[['open', 'date']][0:500] #forming filtered dataframe
